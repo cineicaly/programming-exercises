@@ -59,8 +59,8 @@ struct ListNode *addTwoNumbers(struct ListNode *L1, struct ListNode *L2)
         curr->next = newNode;
         curr = curr->next;
 
-        L1 = L1->next;
-        L2 = L2->next;
+        if (L1) L1 = L1->next;
+        if (L2) L2 = L2->next;
     }
     return dummy.next;
 }
