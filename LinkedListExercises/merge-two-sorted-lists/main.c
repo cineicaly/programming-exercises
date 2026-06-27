@@ -1,3 +1,8 @@
+/*You are given the heads of two sorted linked lists list1 and list2.
+ * Merge the two lists into one sorted list.
+ * The list should be made by splicing together the nodes of the first two
+ * lists. Return the head of the merged linked list.*/
+
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +12,15 @@ struct ListNode {
     struct ListNode *next;
 };
 
+void print_list(struct ListNode *ll)
+{
+    while (ll) {
+        printf("%d", ll->val);
+        ll = ll->next;
+    }
+    printf("\n");
+}
+
 void *safe_malloc(size_t n)
 {
     void *p = malloc(n);
@@ -15,15 +29,6 @@ void *safe_malloc(size_t n)
         abort();
     }
     return p;
-}
-
-void print_list(struct ListNode* ll)
-{
-    while (ll) {
-        printf("%d", ll->val);
-        ll = ll->next;
-    }
-    printf("\n");
 }
 
 struct ListNode *mergeTwoLists(struct ListNode *L1, struct ListNode *L2)
@@ -43,12 +48,15 @@ struct ListNode *mergeTwoLists(struct ListNode *L1, struct ListNode *L2)
         curr = curr->next;
     }
 
-    curr->next = L1 ? L1 : L2;
+    curr->next =
+        L1 ? L1 : L2; // if one linked list doesnt end, you can staple it on to
+                      // the end as it obviously doesnt need sorting
     return dummy.next;
 }
 
-void free_ll(struct ListNode* ll) {
-    struct ListNode* temp;
+void free_ll(struct ListNode *ll)
+{
+    struct ListNode *temp;
     while (ll) {
         temp = ll;
         ll = ll->next;
@@ -84,7 +92,8 @@ int main(void)
     struct ListNode *merged = mergeTwoLists(A_head, B_head);
     print_list(merged);
 
-    free_ll(merged);
+    free_ll(merged); // only free once since i'm entangling the 2 linked lists
+                     // together completely
 
     return 0;
 }
