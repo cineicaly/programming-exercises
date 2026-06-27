@@ -40,7 +40,7 @@ struct ListNode *addTwoNumbers(struct ListNode *L1, struct ListNode *L2)
 
     while (L1 != NULL || L2 != NULL || carry != 0) {
         int digit_sum = carry + (L1 ? L1->val : 0) +
-                        (L2 ? L2->val : 0); // add ll value only if they exist
+                        (L2 ? L2->val : 0); // add LL values only if they exist
 
         carry = digit_sum / 10;
 
@@ -62,7 +62,7 @@ struct ListNode *addTwoNumbers(struct ListNode *L1, struct ListNode *L2)
         if (L1) L1 = L1->next;
         if (L2) L2 = L2->next;
     }
-    return dummy.next;
+    return dummy.next; // return the (pointer to the) first node of the number
 }
 
 void print_linked_list(struct ListNode *llist)
