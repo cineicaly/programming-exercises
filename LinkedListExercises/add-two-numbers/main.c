@@ -7,13 +7,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#undef DEBUG
+
+#ifdef DEBUG
+#define DEBUG_TEST 1
+#else
+#define DEBUG_TEST 0
+#endif
 
 struct ListNode {
     int val;
     struct ListNode *next;
 };
 
-void *safe_malloc(size_t n) {
+void *safe_malloc(size_t n)
+{
     void *p = malloc(n);
     if (p == NULL) {
         perror("malloc fail.");
@@ -24,34 +32,57 @@ void *safe_malloc(size_t n) {
 
 struct ListNode *addTwoNumbers(struct ListNode *L1, struct ListNode *L2)
 {
+    struct ListNode dummy; // dummy on stack, dont need to free.
+    dummy.next = NULL;
+    struct ListNode *curr = &dummy; // dummy is used store the head of the sum linked list
+
     int carry = 0;
-    struct ListNode *curr = NULL, *result_head = NULL;
-    result_head = malloc(sizeof(struct ListNode));
-    curr = malloc(sizeof(struct ListNode));
 
-    while (L1->next != NULL || L2->next != NULL || carry != 0) {
-        int digit_sum = L1->val + L2->val + carry;
+    while (L1 != NULL || L2 != NULL || carry != 0) {
+        int digit_sum = carry + (L1 ? L1->val : 0) +
+                        (L2 ? L2->val : 0); // add ll value only if they exist
 
-        if (digit_sum > 9)
-            carry = digit_sum / 10;
+        carry = digit_sum / 10;
 
-        curr->val = digit_sum % 10;
-
-        struct ListNode *newNode = malloc(sizeof(struct ListNode));
-        if (!newNode) {
-            perror("failed alloc inside addTwoNumbers");
-            return EXIT_FAILURE;
+        if (DEBUG_TEST) {
+            static int i = 0;
+            printf("digit_sum = %d @ node %d\n", digit_sum, i);
+            printf("curr->val = %d\n", curr->val);
+            i++;
         }
 
+        struct ListNode *newNode = safe_malloc(sizeof(struct ListNode));
+
         newNode->next = NULL;
+        newNode->val = digit_sum % 10;
+
         curr->next = newNode;
         curr = curr->next;
 
         L1 = L1->next;
         L2 = L2->next;
     }
+    return dummy.next;
+}
 
-    return 
+void print_linked_list(struct ListNode *llist)
+{
+    struct ListNode *temp = llist;
+    while (temp != NULL) {
+        printf("%d", temp->val);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void free_linked_list(struct ListNode *llist)
+{
+    struct ListNode *temp;
+    while (llist != NULL) {
+        temp = llist;
+        llist = llist->next;
+        free(temp);
+    }
 }
 
 int main(void)
@@ -61,14 +92,9 @@ int main(void)
     struct ListNode *A_second = NULL;
     struct ListNode *A_third = NULL;
 
-    A_head = malloc(sizeof(struct ListNode));
-    A_second = malloc(sizeof(struct ListNode));
-    A_third = malloc(sizeof(struct ListNode));
-
-    if (!A_head || !A_second || !A_third) {
-        perror("more details");
-        return EXIT_FAILURE;
-    }
+    A_head = safe_malloc(sizeof(struct ListNode));
+    A_second = safe_malloc(sizeof(struct ListNode));
+    A_third = safe_malloc(sizeof(struct ListNode));
 
     A_head->val = 2;
     A_head->next = A_second;
@@ -83,14 +109,9 @@ int main(void)
     struct ListNode *B_second = NULL;
     struct ListNode *B_third = NULL;
 
-    B_head = malloc(sizeof(struct ListNode));
-    B_second = malloc(sizeof(struct ListNode));
-    B_third = malloc(sizeof(struct ListNode));
-
-    if (!B_head || !B_second || !B_third) {
-        perror("more details");
-        return EXIT_FAILURE;
-    }
+    B_head = safe_malloc(sizeof(struct ListNode));
+    B_second = safe_malloc(sizeof(struct ListNode));
+    B_third = safe_malloc(sizeof(struct ListNode));
 
     B_head->val = 5;
     B_head->next = B_second;
@@ -100,6 +121,13 @@ int main(void)
 
     B_third->val = 4;
     B_third->next = NULL;
+
+    struct ListNode *sum_head = addTwoNumbers(A_head, B_head);
+    print_linked_list(sum_head);
+
+    free_linked_list(B_head);
+    free_linked_list(A_head);
+    free_linked_list(sum_head);
 
     return 0;
 }
