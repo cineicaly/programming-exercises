@@ -67,10 +67,9 @@ struct ListNode *addTwoNumbers(struct ListNode *L1, struct ListNode *L2)
 
 void print_linked_list(struct ListNode *llist)
 {
-    struct ListNode *temp = llist;
-    while (temp != NULL) {
-        printf("%d", temp->val);
-        temp = temp->next;
+    while (llist != NULL) {
+        printf("%d", llist->val);
+        llist = llist->next;
     }
     printf("\n");
 }
