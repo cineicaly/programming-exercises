@@ -2,17 +2,9 @@
 // return the median of the two sorted arrays.
 // The overall run time complexity should be O(log (m+n)).
 
-
-//this solution is not O(log(m + n)), it's O(m + n)
+// this solution is not O(log(m + n)), it's O(m + n)
 #include <stdio.h>
 #include <stdlib.h>
-
-#define DEBUG
-#ifdef DEBUG
-#define DEBUG_TEST 1
-#else
-#define DEBUG_TEST 0
-#endif
 
 void add_remaining_elements(int *arr, int arr_size, int arr_cnt, int *sorted,
                             int sorted_cnt)
@@ -29,6 +21,7 @@ double findMedianSortedArrays(int *nums1, int nums1Size, int *nums2,
 {
     int sortedSize = nums1Size + nums2Size;
     int *sorted = malloc(sizeof(int) * sortedSize);
+    double median;
 
     int i = 0, j = 0, k = 0;
     while ((i < nums1Size) && (j < nums2Size)) {
@@ -47,22 +40,15 @@ double findMedianSortedArrays(int *nums1, int nums1Size, int *nums2,
 
     switch (sortedSize % 2) { // look up definition of median
     case 0:
-        if (DEBUG_TEST) {
-            printf("sorted[%d] = %d\n", sortedSize / 2, sorted[sortedSize / 2]);
-            printf("sorted[%d] = %d\n", sortedSize / 2 - 1,
-                   sorted[sortedSize / 2 - 1]);
-        }
-        return (double)(sorted[sortedSize / 2] + sorted[(sortedSize / 2) - 1]) /
-               2.0;
-        break;
+        median =
+            (double)(sorted[sortedSize / 2] + sorted[(sortedSize / 2) - 1]) /
+            2.0;
+        free(sorted);
+        return median;
     case 1:
-        if (DEBUG_TEST) {
-            printf("sorted[%d] = %d\n", sortedSize / 2, sorted[sortedSize / 2]);
-            printf("sorted[%d] = %d\n", sortedSize / 2 - 1,
-                   sorted[sortedSize / 2 - 1]);
-        }
-        return (double)sorted[sortedSize / 2];
-        break;
+        median = (double)sorted[sortedSize / 2];
+        free(sorted);
+        return median;
     }
 
     return -1;
@@ -74,7 +60,7 @@ int main(void)
     int y[1] = {2};
     printf("%.2f\n", findMedianSortedArrays(x, 2, y, 1));
     int xx[3] = {2, 6, 7};
-    int yy[3] = {0, 9, 2};
+    int yy[3] = {0, 2, 9};
     printf("%.2f\n", findMedianSortedArrays(xx, 3, yy, 3));
 
     return EXIT_SUCCESS;
